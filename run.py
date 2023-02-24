@@ -1,4 +1,3 @@
-import os
 import time
 import re
 import sys
@@ -15,9 +14,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 
-
-WEBHOOK_URL_TICKETS = os.environ['DISCORD_WEBHOOK_URL_TICKETS']
-WEBHOOK_URL_HEARTBEAT = os.environ['DISCORD_WEBHOOK_URL_HEARTBEAT']
+from .config import CHROMEDRIVER_PATH
+from .config import DESIRED_DATE
+from .config import DISCORD_WEBHOOK_URL_HEARTBEAT
+from .config import DISCORD_WEBHOOK_URL_TICKETS
+from .config import TARGET_URL
 
 
 ## Setup chrome options
@@ -26,7 +27,7 @@ chrome_options.add_argument("--headless") # Ensure GUI is off
 chrome_options.add_argument("--no-sandbox")
 
 # Set path to chromedriver as per your configuration
-webdriver_service = Service(os.environ['CHROMEDRIVER_PATH'])
+webdriver_service = Service(CHROMEDRIVER_PATH)
 
 # Choose Chrome Browser
 browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
@@ -34,7 +35,7 @@ browser = webdriver.Chrome(service=webdriver_service, options=chrome_options)
 
 # E.g. Friday 6th October 2023
 DATE_REGEX = r'\w+ \d+\w+ \w+ \d+'
-DESIRED_DATE_REGEX = rf"\b{os.environ['DESIRED_DATE']}\b"
+DESIRED_DATE_REGEX = rf"\b{DESIRED_DATE}\b"
 
 
 def post_to_discord(webhook_url: str, content: str) -> None:
@@ -45,10 +46,10 @@ def post_to_discord(webhook_url: str, content: str) -> None:
 
 
 def run_once(class_: str) -> None:
-    print('loading', os.environ['TARGET_URL'])
-    browser.get(os.environ['TARGET_URL'])
+    print('loading', TARGET_URL)
+    browser.get(TARGET_URL)
     # TODO: early exit if page failed to load
-    print('successfully loaded', os.environ['TARGET_URL'])
+    print('successfully loaded', TARGET_URL)
 
     # specify adults
     element = browser.find_element(By.NAME, "adults")
@@ -117,15 +118,15 @@ def main() -> None:
 
         if available_classes:
             content = f'Tickets available for {DESIRED_DATE} in {available_classes}'
-            post_to_discord(WEBHOOK_URL_TICKETS, content)
+            post_to_discord(DISCORD_WEBHOOK_URL_TICKETS, content)
         else:
             content = f'[{timestamp}] Run succeeded but no tickets available'
-            post_to_discord(WEBHOOK_URL_HEARTBEAT, content)
+            post_to_discord(DISCORD_WEBHOOK_URL_HEARTBEAT, content)
 
     except Exception as exc:
         print('Ecountered exception:', exc)
         content = f'[{timestamp}] Encountered exception: {exc}'
-        post_to_discord(WEBHOOK_URL_HEARTBEAT, content)
+        post_to_discord(DISCORD_WEBHOOK_URL_HEARTBEAT, content)
 
 
 if __name__ == '__main__':
