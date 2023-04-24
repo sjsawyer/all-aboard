@@ -3,7 +3,7 @@
 A sketchy bot which proved to be successful in discovering the sudden
 availability of train tickets for a certain train.
 
-![train](http://clipart-library.com/newhp/0-9960_train-clipart-steam-train-clipart.png)
+![train](https://images.squarespace-cdn.com/content/v1/5f059b73dacfae75262dd2d0/1594985114027-J2AGTZFC6E5FECHMO6BI/image-asset.jpeg)
 
 ## What Do It Do?
 
